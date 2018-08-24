@@ -131,7 +131,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!store.state.wallet.address) {
+        if (!store.state.wallet.keypass) {
             next({ path: '/signin' })
         }else {
             next()

@@ -119,7 +119,6 @@
             },
 
             logout() {
-                this.$store.commit('wallet/address', false)
                 this.$store.commit('wallet/keypass', false)
                 this.$router.push('/signin')
             }
