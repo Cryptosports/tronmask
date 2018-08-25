@@ -11,6 +11,9 @@ let resolve = (dir) => path.join(rootDir, 'src', dir)
 module.exports = {
     entry: {
         popup: resolve('./popup'),
+        content: resolve('./content'),
+        background: resolve('./background'),
+        inpage: resolve('./inpage')
     },
     output: {
         path: path.join(rootDir, 'dist'),
@@ -77,21 +80,9 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(['*'], { root: path.join(rootDir, 'dist') }),
         // Customize your extension structure.
-        htmlPage('TronMask', 'popup', ['vendor', 'popup']),
+        htmlPage('TronMask', 'popup', ['popup']),
         // End customize
-        new CopyWebpackPlugin([{ from: path.join(rootDir, 'static'), ignore: ['*.DS_Store'] }]),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            minChunks: function (module) {
-                return (
-                    module.resource &&
-                    /\.js$/.test(module.resource) &&
-                    module.resource.indexOf(
-                        path.join(__dirname, '../node_modules')
-                    ) === 0
-                )
-            }
-        })
+        new CopyWebpackPlugin([{ from: path.join(rootDir, 'static'), ignore: ['*.DS_Store'] }])
     ],
     performance: { hints: false }
 }

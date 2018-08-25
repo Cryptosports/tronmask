@@ -23,6 +23,23 @@ module.exports = {
         default_title: 'TronMask',
         default_popup: 'popup.html'
     },
+    background: {
+        scripts: [
+            'js/background.js'
+        ],
+        persistent: false
+    },
+    content_scripts: [{
+        js: [
+            'js/content.js'
+        ],
+        run_at: 'document_start',
+        matches: ['<all_urls>'],
+        all_frames: true
+    }],
+    web_accessible_resources: [
+        'js/inpage.js'
+    ],
     manifest_version: 2,
     content_security_policy: "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
