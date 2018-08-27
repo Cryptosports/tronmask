@@ -15,6 +15,7 @@ import Unfreeze from './pages/Unfreeze.vue'
 import Votes from './pages/Votes.vue'
 import About from './pages/About.vue'
 import store from './store'
+import Notifications from './pages/Notifications.vue'
 
 Vue.use(Router)
 
@@ -125,6 +126,11 @@ const router = new Router({
             path: '/import-wallet',
             name: 'import-wallet',
             component: ImportWallet
+        },
+        {
+            path: '/notifications/:name',
+            name: 'notifications',
+            component: Notifications
         }
     ]
 })
