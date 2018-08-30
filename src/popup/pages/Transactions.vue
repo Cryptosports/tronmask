@@ -3,6 +3,11 @@
         <app-header @refresh="refreshTransactions" />
 
         <main class="main">
+            <nav class="main-tabs">
+                <router-link :class="{ active: $route.name == 'transfers' }" to="/transfers">Transfers</router-link>
+                <router-link :class="{ active: $route.name == 'transactions' }" to="/transactions">All Transactions</router-link>
+            </nav>
+
             <div v-if="transactions.length === 0" class="message-empty">
                 No transactions yet
             </div>

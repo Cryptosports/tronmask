@@ -1,10 +1,10 @@
 <template>
     <header class="header">
         <div class="header-top">
-            <router-link class="header-logo" to="/">
+            <div class="header-logo">
                 <img src="images/tronmask-small.png" alt="TronMask">
                 <span>TRONMASK</span>
-            </router-link>
+            </div>
 
             <div class="network" v-click-outside="hideNetworkDropdown">
                 <a href="#" class="network-toggle" @click.prevent="toggleNetworkDropdown">
@@ -27,11 +27,11 @@
                 </div>
             </div>
 
-            <a class="refresh-toggle" @click.prevent="refreshData" href="#">
+            <a v-show="showNavigations" class="refresh-toggle" @click.prevent="refreshData" href="#">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="icon"><path d="M14.66 15.66A8 8 0 1 1 17 10h-2a6 6 0 1 0-1.76 4.24l1.42 1.42zM12 10h8l-4 4-4-4z"/></svg>
             </a>
 
-            <div v-click-outside="hideDropdownMenu">
+            <div v-show="showNavigations" v-click-outside="hideDropdownMenu">
                 <a class="dropdown-menu-toggle" @click.prevent="toggleDropdownMenu" href="#">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="icon"><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
                 </a>
@@ -48,18 +48,18 @@
         </div>
 
         <div v-if="subtitle" class="header-subtitle">
-            <router-link class="header-subtitle-back" to="/">
+            <router-link v-show="showNavigations" class="header-subtitle-back" to="/">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="icon"><path d="M3.828 9l6.071-6.071-1.414-1.414L0 10l.707.707 7.778 7.778 1.414-1.414L3.828 11H20V9H3.828z"/></svg>
             </router-link>
 
-            <div class="header-subtitle-text">{{ subtitle }}</div>
+            <div class="header-subtitle-text" :class="{ fullsize: !showNavigations }">{{ subtitle }}</div>
         </div>
 
         <nav v-else class="header-tabs">
             <router-link :class="{ active: route.name == 'account' }" to="/">Account</router-link>
             <router-link :class="{ active: route.name == 'tokens' }" to="/tokens">Tokens</router-link>
-            <router-link :class="{ active: route.name == 'transfers' }" to="/transfers">Transfers</router-link>
-            <router-link :class="{ active: route.name == 'transactions' }" to="/transactions">Transactions</router-link>
+            <router-link :class="{ active: route.name == 'transfers' || route.name == 'transactions' }" to="/transfers">Transactions</router-link>
+            <router-link :class="{ active: route.name == 'dapps' }" to="/dapps">Dapps</router-link>
         </nav>
     </header>
 </template>
@@ -70,9 +70,8 @@
 
     export default {
         props: {
-            subtitle: {
-                default: false
-            }
+            subtitle: { default: false },
+            showNavigations: { default: true }
         },
 
         data: () => ({
@@ -119,7 +118,6 @@
             },
 
             logout() {
-                this.$store.commit('wallet/address', false)
                 this.$store.commit('wallet/keypass', false)
                 this.$router.push('/signin')
             }
@@ -160,7 +158,7 @@
         margin-right: 5px;
     }
     .network {
-        margin: -0.2rem 0.75rem 0;
+        margin: -0.2rem 0 0 0.75rem;
         position: relative;
     }
     .network span {
@@ -228,7 +226,7 @@
     }
 
     .refresh-toggle {
-        padding: 0 0.75rem 0 0;
+        padding: 0 0.75rem 0;
     }
 
     .refresh-toggle,
@@ -299,6 +297,9 @@
         font-weight: 600;
         text-align: center;
         padding-right: 30px;
+    }
+    .header-subtitle-text.fullsize {
+        padding-right: 0;
     }
 </style>
 

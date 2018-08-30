@@ -14,6 +14,8 @@ import Freeze from './pages/Freeze.vue'
 import Unfreeze from './pages/Unfreeze.vue'
 import Votes from './pages/Votes.vue'
 import About from './pages/About.vue'
+import Dapps from './pages/Dapps.vue'
+import Notifications from './pages/Notifications.vue'
 import store from './store'
 
 Vue.use(Router)
@@ -109,6 +111,14 @@ const router = new Router({
             }
         },
         {
+            path: '/dapps',
+            name: 'dapps',
+            component: Dapps,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
             path: '/signin',
             name: 'signin',
             component: SignIn,
@@ -125,13 +135,18 @@ const router = new Router({
             path: '/import-wallet',
             name: 'import-wallet',
             component: ImportWallet
+        },
+        {
+            path: '/notifications/:name',
+            name: 'notifications',
+            component: Notifications
         }
     ]
 })
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!store.state.wallet.address) {
+        if (!store.state.wallet.keypass) {
             next({ path: '/signin' })
         }else {
             next()

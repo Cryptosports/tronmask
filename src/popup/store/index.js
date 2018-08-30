@@ -5,12 +5,13 @@ import wallet from './modules/wallet'
 import network from './modules/network'
 import account from './modules/account'
 import votes from './modules/votes'
+import dapps from './modules/dapps'
 
 Vue.use(Vuex)
 
 const vuexLocal = new VuexPersistence({
     storage: window.localStorage,
-    modules: ['wallet', 'network', 'route']
+    modules: ['wallet', 'network', 'route', 'dapps']
 })
 
 export default new Vuex.Store({
@@ -18,7 +19,8 @@ export default new Vuex.Store({
         wallet,
         network,
         account,
-        votes
+        votes,
+        dapps
     },
 
     state: {
