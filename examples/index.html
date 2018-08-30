@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TronMask Examples</title>
+    <meta name="description" content="Access TRON Blockchain from Your Favorite Browser.">
+
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69022104-3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-69022104-3');
+    </script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>Examples</h1>
+
+        <div id="tronmask" style="display: none">
+            <button id="connect-tronmask" style="display: none">Connect to TronMask</button>
+            <div id="tronmask-account" style="display: none"></div>
+        </div>
+
+        <div id="no-tronmask">
+            Please install TronMask to use this Dapp
+        </div>
+    </div>
+
+    <script>
+        var dappStart = function() {
+            document.getElementById('no-tronmask').style.display = 'none';
+            document.getElementById('tronmask').style.display = 'block';
+
+            TronMask.getAccount(function(response){
+                if (response.status === 'success') {
+                    var tronmaskAccountDOM = document.getElementById('tronmask-account')
+                    tronmaskAccountDOM.innerText = response.data.address
+                    tronmaskAccountDOM.style.display = 'block';
+                }else {
+                    document.getElementById('connect-tronmask').style.display = 'block';
+                }
+            });
+
+            document.getElementById('connect-tronmask').addEventListener('click', function(e){
+                e.preventDefault();
+
+                TronMask.connect(function(response){
+                    if (response.status === 'success') {
+                        var tronmaskAccountDOM = document.getElementById('tronmask-account')
+                        tronmaskAccountDOM.innerText = response.data.address
+                        tronmaskAccountDOM.style.display = 'block';
+                        document.getElementById('connect-tronmask').style.display = 'none';
+                    }
+                });
+            });
+        };
+
+        window.addEventListener('load', function() {
+            if (typeof TronMask !== 'undefined') {
+                dappStart();
+            }
+        });
+    </script>
+</body>
