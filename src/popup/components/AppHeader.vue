@@ -58,8 +58,8 @@
         <nav v-else class="header-tabs">
             <router-link :class="{ active: route.name == 'account' }" to="/">Account</router-link>
             <router-link :class="{ active: route.name == 'tokens' }" to="/tokens">Tokens</router-link>
-            <router-link :class="{ active: route.name == 'transfers' }" to="/transfers">Transfers</router-link>
-            <router-link :class="{ active: route.name == 'transactions' }" to="/transactions">Transactions</router-link>
+            <router-link :class="{ active: route.name == 'transfers' || route.name == 'transactions' }" to="/transfers">Transactions</router-link>
+            <router-link :class="{ active: route.name == 'dapps' }" to="/dapps">Dapps</router-link>
         </nav>
     </header>
 </template>

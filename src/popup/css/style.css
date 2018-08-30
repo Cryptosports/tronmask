@@ -91,6 +91,21 @@ a:hover {
 .main {
     padding: 6rem 1rem 1rem;
 }
+.main-tabs {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+.main-tabs a {
+    color: #BDBDBD;
+    padding: 0 0.375rem;
+}
+.main-tabs a:hover {
+    color: #757575;
+}
+.main-tabs a.active {
+    color: #757575;
+}
 
 .auth {
     clear: both;
@@ -229,6 +244,17 @@ textarea.input-field:read-only,
 .input-group .button:active {
     transform: none;
     background: #F5F5F5;
+}
+
+.button-group {
+    display: flex;
+    margin-right: -0.375rem;
+    margin-left: -0.375rem;
+}
+.button-group-item {
+    width: 50%;
+    padding-right: 0.375rem;
+    padding-left: 0.375rem;
 }
 
 .form-info {

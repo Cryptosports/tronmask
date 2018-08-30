@@ -14,8 +14,9 @@ import Freeze from './pages/Freeze.vue'
 import Unfreeze from './pages/Unfreeze.vue'
 import Votes from './pages/Votes.vue'
 import About from './pages/About.vue'
-import store from './store'
+import Dapps from './pages/Dapps.vue'
 import Notifications from './pages/Notifications.vue'
+import store from './store'
 
 Vue.use(Router)
 
@@ -105,6 +106,14 @@ const router = new Router({
             path: '/about',
             name: 'about',
             component: About,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/dapps',
+            name: 'dapps',
+            component: Dapps,
             meta: {
                 requiresAuth: true
             }
