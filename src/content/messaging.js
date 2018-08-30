@@ -1,27 +1,38 @@
-export function sendMessage(to, name, payload) {
-    if (to === 'inpage') {
-        window.postMessage({ from: 'content', name, payload }, window.location.origin)
-    }else if (to === 'background') {
-        chrome.runtime.sendMessage({ from: 'content', name, payload })
-    }
-}
+export default {
+    postInpage(name, payload) {
+        name = `${name}_response`
+        window.postMessage({ from: 'content', name, payload }, '*')
+    },
 
-export function listenMessage(from, callback) {
-    if (from === 'inpage') {
+    listenInpage(callback) {
         window.addEventListener('message', event => {
-            if (event.source !== window || event.data.from !== from) {
+            if (event.origin !== window.location.origin || event.data.from !== 'inpage') {
                 return
             }
 
             callback(event.data, event)
         })
-    }else if (from === 'background') {
-        chrome.runtime.onMessage.addListener((msg, sender) => {
-            if (msg.from !== from) {
+    },
+
+    postBackground(name, payload) {
+        chrome.runtime.sendMessage({ from: 'content', name, domain: window.location.hostname, payload })
+    },
+
+    listenBackground(name, callback) {
+        const listener = (msg, sender) => {
+            if (msg.from !== 'background' || msg.name !== name ) {
                 return
             }
 
             callback(msg, sender)
-        })
+            chrome.runtime.onMessage.removeListener(listener)
+        }
+
+        chrome.runtime.onMessage.addListener(listener)
+    },
+
+    sendBackground(name, payload, callback) {
+        this.postBackground(name, payload)
+        this.listenBackground(`${name}_response`, callback)
     }
 }

@@ -1,13 +1,28 @@
-export function sendMessage(name, payload) {
-    window.postMessage({ from: 'inpage', name, payload }, window.location.origin)
-}
+export default {
+    post(name, payload) {
+        window.postMessage({ from: 'inpage', name, payload }, '*')
+    },
 
-export function listenMessage(name, callback) {
-    window.addEventListener('message', event => {
-        if (event.source !== window || event.data.from !== 'content' || event.data.name !== name) {
-            return
+    listen(name, callback) {
+        const listener = event => {
+            if (event.origin !== window.location.origin || event.data.from !== 'content' || event.data.name !== name) {
+                return
+            }
+
+            callback(event.data, event)
+            window.removeEventListener('message', listener)
         }
 
-        callback(event.data, event)
-    })
+        window.addEventListener('message', listener)
+    },
+
+    send(name, payload, callback) {
+        name = `tronmask_${name}`
+
+        this.post(name, payload)
+
+        this.listen(`${name}_response`, msg => {
+            callback(msg.payload)
+        })
+    }
 }
