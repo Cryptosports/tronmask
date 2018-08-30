@@ -64,7 +64,6 @@
 
             removeDapp(dapp) {
                 const dapps = this.dapps.filter(d => d.domain !== dapp.domain)
-                console.log(dapps)
 
                 this.$store.commit('dapps/dapps', dapps)
             }

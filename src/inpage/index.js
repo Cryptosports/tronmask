@@ -1,12 +1,12 @@
-import { sendMessage, listenMessage } from './messaging'
+import messaging from './messaging'
 
 class TronMask {
     connect(callback) {
-        sendMessage('connect', { domain: window.location.hostname })
+        messaging.send('connect', {}, callback)
+    }
 
-        listenMessage('connect', function(msg){
-            callback(msg.payload)
-        })
+    getAccount(callback) {
+        messaging.send('get_account', {}, callback)
     }
 }
 

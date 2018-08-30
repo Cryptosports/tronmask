@@ -9,5 +9,9 @@ export default {
         dapps(state, dapps) {
             state.dapps = dapps
         },
+
+        pushDapps(state, dapp) {
+            state.dapps.push(dapp)
+        }
     }
 }

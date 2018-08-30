@@ -1,4 +1,4 @@
-import { sendMessage, listenMessage } from './messaging'
+import messaging from './messaging'
 
 // Inject inpage script to web page.
 function injectScript(filepath) {
@@ -11,20 +11,16 @@ function injectScript(filepath) {
     container.insertBefore(scriptTag, container.children[0])
 }
 
-injectScript(chrome.extension.getURL('js/inpage.js'))
-
-// Listen Inpage Messaging
-listenMessage('inpage', function(msg){
-    if (msg.name === 'connect') {
-        sendMessage('background', 'connect', msg.payload)
-        return
+messaging.sendBackground('tronmask_wallet_available', {}, msg => {
+    if (msg.payload.status === 'success') {
+        injectScript(chrome.extension.getURL('js/inpage.js'))
     }
 })
 
-// Listen Background Messaging
-listenMessage('background', function(msg){
-    if (msg.name === 'connect') {
-        sendMessage('inpage', 'connect', msg.payload)
-        return
-    }
+
+// Listen Inpage Messaging
+messaging.listenInpage(inpageMsg => {
+    messaging.sendBackground(inpageMsg.name, inpageMsg.payload, backgroundMsg => {
+        messaging.postInpage(inpageMsg.name, backgroundMsg.payload)
+    })
 })
