@@ -8,6 +8,10 @@ class TronMask {
     getAccount(callback) {
         messaging.send('get_account', {}, callback)
     }
+
+    submitTransaction(tx, callback) {
+        messaging.send('submit_transaction', { tx }, callback)
+    }
 }
 
 window.TronMask = new TronMask()
