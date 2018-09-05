@@ -15,6 +15,10 @@
                     <p>This won't let the dapp to access your private key.</p>
                 </div>
 
+                <div v-show="$route.params.name == 'submit-transaction'" class="notif-text">
+
+                </div>
+
                 <div v-show="!wallet.keypass">
                     <div v-show="message.show" class="message" :class="[ message.type ]">
                         {{ message.text }}
@@ -52,7 +56,8 @@
                 show: false,
                 type: 'error',
                 text: ''
-            }
+            },
+            payload: false
         }),
 
         computed: {
@@ -68,6 +73,11 @@
                 wallet: state => state.wallet,
                 network: state => state.network
             })
+        },
+
+        mounted() {
+            this.onLoaded()
+            this.getPayload()
         },
 
         methods: {
@@ -87,6 +97,23 @@
                 }
 
                 return true
+            },
+
+            onLoaded() {
+                chrome.runtime.sendMessage({ from: 'popup', name: 'tronmask_notification_loaded' })
+            },
+
+            getPayload() {
+                const listener = (msg, sender) => {
+                    if (msg.from !== 'background' || msg.name !== 'tronmask_notification') {
+                        return
+                    }
+
+                    this.payload = msg.payload
+                    chrome.runtime.onMessage.removeListener(listener)
+                }
+
+                chrome.runtime.onMessage.addListener(listener)
             },
 
             getWindow(callback) {
@@ -123,6 +150,9 @@
                     case 'connect':
                         this.allowDapp()
                         break
+                    case 'submit-transaction':
+                        this.submitTransaction()
+                        break
                     default:
                         break
                 }
@@ -152,6 +182,14 @@
                     this.sendMessage('connect', payload)
                     this.closeWindow(window.id)
                 })
+            },
+
+            submitTransaction() {
+                if (!this.payload) {
+                    return
+                }
+
+                //
             }
         }
     }

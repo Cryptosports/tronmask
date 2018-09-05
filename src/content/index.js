@@ -15,7 +15,15 @@ injectScript(chrome.extension.getURL('js/inpage.js'))
 
 // Listen Inpage Messaging
 messaging.listenInpage(inpageMsg => {
-    messaging.sendBackground(inpageMsg.name, inpageMsg.payload, backgroundMsg => {
-        messaging.postInpage(inpageMsg.name, backgroundMsg.payload)
-    })
+    const methods = [
+        'tronmask_connect',
+        'tronmask_get_account',
+        'tronmask_submit_transaction',
+    ]
+
+    if (methods.includes(inpageMsg.name)) {
+        messaging.sendBackground(inpageMsg.name, inpageMsg.payload, backgroundMsg => {
+            messaging.postInpage(inpageMsg.name, backgroundMsg.payload)
+        })
+    }
 })

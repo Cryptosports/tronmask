@@ -64,6 +64,16 @@ const actions = {
         }
 
         this.account(msg, sender)
+    },
+
+    submitTransaction(msg, sender) {
+        if (!this.allowed(msg.domain)) {
+            this.unauthorized(msg, sender)
+            return
+        }
+
+        notifications.show('submit-transaction', {}, sender.tab.id)
+        notifications.sendPayload({ tx: msg.payload.tx })
     }
 }
 
@@ -76,6 +86,10 @@ messaging.listen('content', (msg, sender) => {
 
         case 'tronmask_get_account':
             actions.getAccount(msg, sender)
+            break
+
+        case 'tronmask_submit_transaction':
+            actions.submitTransaction(msg, sender)
             break
 
         default:
