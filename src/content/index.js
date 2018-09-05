@@ -11,12 +11,7 @@ function injectScript(filepath) {
     container.insertBefore(scriptTag, container.children[0])
 }
 
-messaging.sendBackground('tronmask_wallet_available', {}, msg => {
-    if (msg.payload.status === 'success') {
-        injectScript(chrome.extension.getURL('js/inpage.js'))
-    }
-})
-
+injectScript(chrome.extension.getURL('js/inpage.js'))
 
 // Listen Inpage Messaging
 messaging.listenInpage(inpageMsg => {

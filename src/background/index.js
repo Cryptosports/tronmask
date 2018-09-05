@@ -31,15 +31,23 @@ const actions = {
         }, sender.tab.id)
     },
 
-    walletAvailable(msg, sender) {
+    walletAvailable() {
         const state = this.getState()
-        const status = (state.wallet.keystore && state.wallet.address) ? 'success' : 'error'
-        messaging.postContent(msg.name, { status }, sender.tab.id)
+        return state.wallet.keystore && state.wallet.address
     },
 
     connect(msg, sender) {
         if (this.allowed(msg.domain)) {
             this.account(msg, sender)
+            return
+        }
+
+        if (!this.walletAvailable()) {
+            messaging.postContent(msg.name, {
+                status: 'error',
+                type: 'WALLET_UNAVAILABLE'
+            }, sender.tab.id)
+
             return
         }
 
@@ -62,10 +70,6 @@ const actions = {
 // Listen Content Messaging
 messaging.listen('content', (msg, sender) => {
     switch (msg.name) {
-        case 'tronmask_wallet_available':
-            actions.walletAvailable(msg, sender)
-            break
-
         case 'tronmask_connect':
             actions.connect(msg, sender)
             break
@@ -81,5 +85,11 @@ messaging.listen('content', (msg, sender) => {
 
 // Listen Popup Messaging
 messaging.listen('popup', msg => {
-    messaging.postContent(msg.name, msg.payload, msg.tabid)
+    const methods = [
+        'tronmask_connect'
+    ]
+
+    if (methods.includes(msg.name)) {
+        messaging.postContent(msg.name, msg.payload, msg.tabid)
+    }
 })
