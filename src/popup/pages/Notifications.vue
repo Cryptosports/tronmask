@@ -16,7 +16,17 @@
                 </div>
 
                 <div v-show="$route.params.name == 'submit-transaction'" class="notif-text">
+                    <table>
+                        <tr>
+                            <td>Type</td>
+                            <td>{{ txContract.type }}</td>
+                        </tr>
 
+                        <tr v-for="(value, key, index) in txContract.parameter.value" :key="index">
+                            <td>{{ key }}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                    </table>
                 </div>
 
                 <div v-show="!wallet.keypass">
@@ -43,6 +53,7 @@
 <script>
     import { mapState } from 'vuex'
     import { decryptKeyStore } from '../../lib/keystore'
+    import tronWeb from '../../lib/tronweb'
     import AppHeader from '../components/AppHeader.vue'
 
     export default {
@@ -67,6 +78,11 @@
                 }
 
                 return subtitles[this.$route.params.name] || 'Confirm Transaction'
+            },
+            txContract() {
+                const contract = ((this.payload.tx || {}).raw_data || {}).contract || []
+
+                return contract[0] || {}
             },
             ...mapState({
                 dapps: state => state.dapps,
