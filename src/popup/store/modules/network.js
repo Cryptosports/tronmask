@@ -5,6 +5,7 @@ export default {
         id: 1,
         name: 'Mainnet',
         url: 'https://api.tronscan.org',
+        fullnode: 'http://api.trondapps.org',
         type: 'mainnet'
     },
 
