@@ -4,7 +4,7 @@
 
         <main class="main">
             <div>
-                <div v-show="$route.params.name == 'connect'" class="notif-text">
+                <div v-if="$route.params.name == 'connect'" class="notif-text">
                     <p><strong>{{ $route.query.domain }}</strong> want to access your TRON account. It could access :</p>
 
                     <ul>
@@ -15,21 +15,13 @@
                     <p>This won't let the dapp to access your private key.</p>
                 </div>
 
-                <div v-show="$route.params.name == 'submit-transaction'" class="notif-text">
-                    <table>
-                        <tr>
-                            <td>Type</td>
-                            <td>{{ txContract.type }}</td>
-                        </tr>
+                <div v-if="$route.params.name == 'submit-transaction'" class="notif-text">
+                    <transfer-details v-if="txContract.type === 'TransferContract'" :contract="txContract" />
 
-                        <tr v-for="(value, key, index) in txContract.parameter.value" :key="index">
-                            <td>{{ key }}</td>
-                            <td>{{ value }}</td>
-                        </tr>
-                    </table>
+                    <transaction-details v-else :contract="txContract" />
                 </div>
 
-                <div v-show="!wallet.keypass">
+                <div v-if="!wallet.keypass">
                     <div v-show="message.show" class="message" :class="[ message.type ]">
                         {{ message.text }}
                     </div>
@@ -55,10 +47,14 @@
     import { decryptKeyStore } from '../../lib/keystore'
     import tronWeb from '../../lib/tronweb'
     import AppHeader from '../components/AppHeader.vue'
+    import TransactionDetails from '../components/notifications/TransactionDetails.vue'
+    import TransferDetails from '../components/notifications/TransferDetails.vue'
 
     export default {
         components: {
-            AppHeader
+            AppHeader,
+            TransactionDetails,
+            TransferDetails
         },
 
         data: () => ({
