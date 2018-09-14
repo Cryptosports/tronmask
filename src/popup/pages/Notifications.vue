@@ -2,9 +2,9 @@
     <div>
         <app-header :subtitle="subtitle" :show-navigations="false" />
 
-        <main class="main">
-            <div>
-                <div v-if="$route.params.name == 'connect'" class="notif-text">
+        <main class="main notif">
+            <div class="notif-text">
+                <div v-if="$route.params.name == 'connect'">
                     <p><strong>{{ $route.query.domain }}</strong> want to access your TRON account. It could access :</p>
 
                     <ul>
@@ -15,27 +15,27 @@
                     <p>This won't let the dapp to access your private key.</p>
                 </div>
 
-                <div v-if="$route.params.name == 'submit-transaction'" class="notif-text">
+                <div v-else-if="$route.params.name == 'submit-transaction' && txContract">
                     <transfer-details v-if="txContract.type === 'TransferContract'" :contract="txContract" />
-
+                    <transfer-asset-details v-else-if="txContract.type === 'TransferAssetContract'" :contract="txContract" />
                     <transaction-details v-else :contract="txContract" />
                 </div>
+            </div>
 
-                <div v-if="!wallet.keypass">
-                    <div v-show="message.show" class="message" :class="[ message.type ]">
-                        {{ message.text }}
-                    </div>
-
-                    <input class="input-field" type="password" placeholder="Password" v-model="password">
+            <div v-if="!wallet.keypass">
+                <div v-show="message.show" class="message" :class="[ message.type ]">
+                    {{ message.text }}
                 </div>
 
-                <div class="button-group">
-                    <div class="button-group-item">
-                        <button class="button" type="button" @click.prevent="cancel($route.params.name)">Cancel</button>
-                    </div>
-                    <div class="button-group-item">
-                        <button class="button brand" type="button" @click.prevent="approve($route.params.name)">Approve</button>
-                    </div>
+                <input class="input-field" type="password" placeholder="Password" v-model="password">
+            </div>
+
+            <div class="button-group">
+                <div class="button-group-item">
+                    <button class="button" type="button" @click.prevent="cancel($route.params.name)">Cancel</button>
+                </div>
+                <div class="button-group-item">
+                    <button class="button brand" type="button" @click.prevent="approve($route.params.name)">Approve</button>
                 </div>
             </div>
         </main>
@@ -49,12 +49,14 @@
     import AppHeader from '../components/AppHeader.vue'
     import TransactionDetails from '../components/notifications/TransactionDetails.vue'
     import TransferDetails from '../components/notifications/TransferDetails.vue'
+    import TransferAssetDetails from '../components/notifications/TransferAssetDetails.vue'
 
     export default {
         components: {
             AppHeader,
             TransactionDetails,
-            TransferDetails
+            TransferDetails,
+            TransferAssetDetails,
         },
 
         data: () => ({
@@ -78,7 +80,7 @@
             txContract() {
                 const contract = ((this.payload.tx || {}).raw_data || {}).contract || []
 
-                return contract[0] || {}
+                return contract[0] || false
             },
             ...mapState({
                 dapps: state => state.dapps,
@@ -148,7 +150,7 @@
             cancel(page) {
                 const payload = {
                     status: 'error',
-                    type: 'REJECTED'
+                    type: 'CANCELLED'
                 }
 
                 this.getWindow(window => {
@@ -208,11 +210,40 @@
 </script>
 
 <style>
+    .main.notif {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
     .notif-text {
         font-size: 0.875rem;
     }
     .notif-text ul {
         padding-left: 1.25rem;
+    }
+    .notif-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem;
+    }
+    .notif-table tr {
+        background: #EEEEEE;
+        border-top: 1px solid #E0E0E0;
+        border-bottom: 1px solid #E0E0E0;
+    }
+    .notif-table tr:nth-child(even) {
+        background: #F5F5F5;
+    }
+    .notif-table th,
+    .notif-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    .notif-table th {
+        font-weight: 600;
+        text-align: left;
+        text-transform: capitalize;
+    }
+    .notif .button-group {
+        padding-bottom: 1rem;
     }
 </style>
 

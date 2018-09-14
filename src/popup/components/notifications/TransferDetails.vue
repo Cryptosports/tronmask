@@ -1,22 +1,20 @@
 <template>
-    <div>
-        <table>
-            <tr>
-                <td>From</td>
-                <td>{{ transferDetails.from }}</td>
-            </tr>
+    <table class="notif-table">
+        <tr>
+            <th>From</th>
+            <td>{{ transferDetails.from }}</td>
+        </tr>
 
-            <tr>
-                <td>To</td>
-                <td>{{ transferDetails.to }}</td>
-            </tr>
+        <tr>
+            <th>To</th>
+            <td>{{ transferDetails.to }}</td>
+        </tr>
 
-            <tr>
-                <td>Amount</td>
-                <td>{{ $formatNumber(transferDetails.amount, { maximumSignificantDigits: 7 }) }} TRX</td>
-            </tr>
-        </table>
-    </div>
+        <tr>
+            <th>Amount</th>
+            <td>{{ $formatNumber(transferDetails.amount, { maximumSignificantDigits: 7 }) }} TRX</td>
+        </tr>
+    </table>
 </template>
 
 <script>
