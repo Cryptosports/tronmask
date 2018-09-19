@@ -18,6 +18,8 @@
                 <div v-else-if="$route.params.name == 'submit-transaction' && txContract">
                     <transfer-details v-if="txContract.type === 'TransferContract'" :contract="txContract" />
                     <transfer-asset-details v-else-if="txContract.type === 'TransferAssetContract'" :contract="txContract" />
+                    <freeze-details v-else-if="txContract.type === 'FreezeBalanceContract'" :contract="txContract" />
+                    <votes-details v-else-if="txContract.type === 'VoteWitnessContract'" :contract="txContract" />
                     <transaction-details v-else :contract="txContract" />
                 </div>
             </div>
@@ -50,6 +52,8 @@
     import TransactionDetails from '../components/notifications/TransactionDetails.vue'
     import TransferDetails from '../components/notifications/TransferDetails.vue'
     import TransferAssetDetails from '../components/notifications/TransferAssetDetails.vue'
+    import FreezeDetails from '../components/notifications/FreezeDetails.vue'
+    import VotesDetails from '../components/notifications/VotesDetails.vue'
 
     export default {
         components: {
@@ -57,6 +61,8 @@
             TransactionDetails,
             TransferDetails,
             TransferAssetDetails,
+            FreezeDetails,
+            VotesDetails,
         },
 
         data: () => ({
@@ -244,6 +250,12 @@
     }
     .notif .button-group {
         padding-bottom: 1rem;
+    }
+    .notif-subtile {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        margin: 1.5rem 0 0.75rem;
+        padding: 0 0.25rem;
     }
 </style>
 
