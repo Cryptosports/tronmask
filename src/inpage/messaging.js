@@ -5,11 +5,13 @@ export default {
 
     listen(name, callback) {
         const listener = event => {
-            if (event.origin !== window.location.origin || event.data.from !== 'content' || event.data.name !== name) {
+            const msg = event.data || {}
+
+            if (event.origin !== window.location.origin || msg.from !== 'content' || msg.name !== name) {
                 return
             }
 
-            callback(event.data, event)
+            callback(msg, event)
             window.removeEventListener('message', listener)
         }
 

@@ -6,11 +6,13 @@ export default {
 
     listenInpage(callback) {
         window.addEventListener('message', event => {
-            if (event.origin !== window.location.origin || event.data.from !== 'inpage') {
+            const msg = event.data || {}
+
+            if (event.origin !== window.location.origin || msg.from !== 'inpage') {
                 return
             }
 
-            callback(event.data, event)
+            callback(msg, event)
         })
     },
 
