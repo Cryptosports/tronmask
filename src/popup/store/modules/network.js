@@ -14,6 +14,7 @@ export default {
             state.id = network.id
             state.name = network.name
             state.url = network.url
+            state.fullnode = network.fullnode
             state.type = network.type
         }
     }

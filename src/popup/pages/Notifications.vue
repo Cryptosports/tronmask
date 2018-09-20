@@ -3,6 +3,10 @@
         <app-header :subtitle="subtitle" :show-navigations="false" />
 
         <main class="main notif">
+            <div v-show="message.show" class="message" :class="[ message.type ]">
+                {{ message.text }}
+            </div>
+
             <div class="notif-text">
                 <div v-if="$route.params.name == 'connect'">
                     <p><strong>{{ $route.query.domain }}</strong> want to access your TRON account. It could access :</p>
@@ -15,7 +19,7 @@
                     <p>This won't let the dapp to access your private key.</p>
                 </div>
 
-                <div v-else-if="$route.params.name == 'submit-transaction' && txContract">
+                <div v-else-if="$route.params.name == 'submit_transaction' && txContract">
                     <transfer-details v-if="txContract.type === 'TransferContract'" :contract="txContract" />
                     <transfer-asset-details v-else-if="txContract.type === 'TransferAssetContract'" :contract="txContract" />
                     <freeze-details v-else-if="txContract.type === 'FreezeBalanceContract'" :contract="txContract" />
@@ -25,10 +29,6 @@
             </div>
 
             <div v-if="!wallet.keypass">
-                <div v-show="message.show" class="message" :class="[ message.type ]">
-                    {{ message.text }}
-                </div>
-
                 <input class="input-field" type="password" placeholder="Password" v-model="password">
             </div>
 
@@ -103,7 +103,7 @@
         methods: {
             login() {
                 if (this.wallet.keypass) {
-                    return true
+                    return decryptKeyStore(this.wallet.keypass, this.wallet.keystore)
                 }
 
                 const wallet = decryptKeyStore(this.password, this.wallet.keystore)
@@ -116,7 +116,7 @@
                     return false
                 }
 
-                return true
+                return wallet
             },
 
             onLoaded() {
@@ -154,13 +154,11 @@
             },
 
             cancel(page) {
-                const payload = {
-                    status: 'error',
-                    type: 'CANCELLED'
-                }
-
                 this.getWindow(window => {
-                    this.sendMessage(page, payload)
+                    this.sendMessage(page, {
+                        status: 'error',
+                        type: 'CANCELLED'
+                    })
                     this.closeWindow(window.id)
                 })
             },
@@ -170,7 +168,7 @@
                     case 'connect':
                         this.allowDapp()
                         break
-                    case 'submit-transaction':
+                    case 'submit_transaction':
                         this.submitTransaction()
                         break
                     default:
@@ -190,26 +188,56 @@
 
                 this.$store.commit('dapps/pushDapps', dapp)
 
-                const payload = {
-                    status: 'success',
-                    data: {
-                        address: this.wallet.address,
-                        network: this.network
-                    }
-                }
-
                 this.getWindow(window => {
-                    this.sendMessage('connect', payload)
+                    this.sendMessage('connect', {
+                        status: 'success',
+                        data: {
+                            address: this.wallet.address,
+                            network: this.network
+                        }
+                    })
                     this.closeWindow(window.id)
                 })
             },
 
-            submitTransaction() {
+            async submitTransaction() {
                 if (!this.payload) {
                     return
                 }
 
-                //
+                const wallet = this.login()
+
+                if (!wallet) {
+                    return false
+                }
+
+                this.$store.commit('loading', true)
+
+                this.message.type = 'error'
+                this.message.text = 'Something went wrong while submitting the transaction'
+
+                try {
+                    const signedTx = await tronWeb().signTransaction(this.payload.tx, wallet.privateKey)
+                    const response = await tronWeb().sendRawTransaction(signedTx)
+
+                    if (response.result) {
+                        this.getWindow(window => {
+                            this.sendMessage('submit_transaction', {
+                                status: 'success',
+                                data: {
+                                    txID: this.payload.tx.txID
+                                }
+                            })
+                            this.closeWindow(window.id)
+                        })
+                    }else {
+                        this.message.show = true
+                    }
+                } catch (error) {
+                    this.message.show = true
+                }
+
+                this.$store.commit('loading', false)
             }
         }
     }
@@ -228,6 +256,7 @@
     }
     .notif-table {
         width: 100%;
+        margin: 1rem 0;
         border-collapse: collapse;
         font-size: 0.75rem;
     }
@@ -254,7 +283,7 @@
     .notif-subtile {
         font-size: 0.75rem;
         text-transform: uppercase;
-        margin: 1.5rem 0 0.75rem;
+        margin: 1rem 0 0.75rem;
         padding: 0 0.25rem;
     }
 </style>

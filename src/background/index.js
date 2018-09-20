@@ -72,7 +72,7 @@ const actions = {
             return
         }
 
-        notifications.show('submit-transaction', {}, sender.tab.id)
+        notifications.show('submit_transaction', {}, sender.tab.id)
         notifications.sendPayload({ tx: msg.payload.tx })
     }
 }
@@ -100,7 +100,8 @@ messaging.listen('content', (msg, sender) => {
 // Listen Popup Messaging
 messaging.listen('popup', msg => {
     const methods = [
-        'tronmask_connect'
+        'tronmask_connect',
+        'tronmask_submit_transaction'
     ]
 
     if (methods.includes(msg.name)) {
