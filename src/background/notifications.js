@@ -26,5 +26,24 @@ export default {
             width: 370,
             height: 600
         })
+    },
+
+    sendPayload(payload) {
+        this.onLoaded(() => {
+            chrome.runtime.sendMessage({ from: 'background', name: 'tronmask_notification', payload })
+        })
+    },
+
+    onLoaded(callback) {
+        const listener = (msg, sender) => {
+            if (msg.from !== 'popup' || msg.name !== 'tronmask_notification_loaded') {
+                return
+            }
+
+            callback(msg, sender)
+            chrome.runtime.onMessage.removeListener(listener)
+        }
+
+        chrome.runtime.onMessage.addListener(listener)
     }
 }
