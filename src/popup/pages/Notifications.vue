@@ -217,8 +217,9 @@
                 this.message.text = 'Something went wrong while submitting the transaction'
 
                 try {
-                    const signedTx = await tronWeb().signTransaction(this.payload.tx, wallet.privateKey)
-                    const response = await tronWeb().sendRawTransaction(signedTx)
+                    const signedTx = await tronWeb().trx.sign(this.payload.tx, wallet.privateKey)
+                    const response = await tronWeb().trx.sendRawTransaction(signedTx)
+
 
                     if (response.result) {
                         this.getWindow(window => {

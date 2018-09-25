@@ -14,6 +14,7 @@
 
 <script>
     import tronWeb from '../../../lib/tronweb'
+    import { getTokenAmount } from '../../../lib/utils'
 
     export default {
         props: ['contract'],
@@ -25,11 +26,11 @@
 
             contractValue(key, value) {
                 if (key === 'owner_address' || key === 'to_address' || key === 'asset_name') {
-                    return tronWeb().fromHex(value)
+                    return tronWeb().address.fromHex(value)
                 }
 
                 if (key === 'frozen_balance') {
-                    return tronWeb().sunToTrx(value)
+                    return getTokenAmount(value)
                 }
 
                 return value

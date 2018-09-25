@@ -38,7 +38,7 @@
             transferDetails() {
                 if (this.contract) {
                     return {
-                        address: tronWeb().fromHex(this.contract.parameter.value.owner_address),
+                        address: this.fromHex(this.contract.parameter.value.owner_address),
                         votes: this.contract.parameter.value.votes
                     }
                 }
@@ -49,7 +49,7 @@
 
         methods: {
             fromHex(address) {
-                return tronWeb().fromHex(address)
+                return tronWeb().address.fromHex(address)
             }
         }
     }

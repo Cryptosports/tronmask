@@ -30,9 +30,9 @@
             transferDetails() {
                 if (this.contract) {
                     return {
-                        from: tronWeb().fromHex(this.contract.parameter.value.owner_address),
-                        to: tronWeb().fromHex(this.contract.parameter.value.to_address),
-                        assetName: tronWeb().fromHex(this.contract.parameter.value.asset_name),
+                        from: tronWeb().address.fromHex(this.contract.parameter.value.owner_address),
+                        to: tronWeb().address.fromHex(this.contract.parameter.value.to_address),
+                        assetName: tronWeb().toUtf8(this.contract.parameter.value.asset_name),
                         amount: this.contract.parameter.value.amount
                     }
                 }
