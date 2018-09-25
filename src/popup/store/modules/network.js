@@ -5,7 +5,9 @@ export default {
         id: 1,
         name: 'Mainnet',
         url: 'https://api.tronscan.org',
-        fullnode: 'http://api.trondapps.org',
+        fullNode: 'http://api.trondapps.org',
+        solidityNode: 'http://api.trondapps.org',
+        eventServer: 'http://api.trondapps.org',
         type: 'mainnet'
     },
 
@@ -14,7 +16,9 @@ export default {
             state.id = network.id
             state.name = network.name
             state.url = network.url
-            state.fullnode = network.fullnode
+            state.fullNode = network.fullNode
+            state.solidityNode = network.solidityNode
+            state.eventServer = network.eventServer
             state.type = network.type
         }
     }
