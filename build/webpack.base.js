@@ -52,7 +52,8 @@ module.exports = {
             include: [
                 path.join(rootDir, 'src'),
                 // https://github.com/sagalbot/vue-select/issues/71#issuecomment-229453096
-                path.join(rootDir, 'node_modules', '@tronscan', 'client', 'src')
+                path.join(rootDir, 'node_modules', '@tronscan', 'client', 'src'),
+                path.join(rootDir, 'node_modules', 'tronweb', 'src')
             ]
         }, {
             test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -84,5 +85,9 @@ module.exports = {
         // End customize
         new CopyWebpackPlugin([{ from: path.join(rootDir, 'static'), ignore: ['*.DS_Store'] }])
     ],
-    performance: { hints: false }
+    performance: { hints: false },
+    node: {
+        fs: 'empty',
+        module: 'empty'
+    }
 }
