@@ -26,6 +26,14 @@
                     <votes-details v-else-if="txContract.type === 'VoteWitnessContract'" :contract="txContract" />
                     <transaction-details v-else :contract="txContract" />
                 </div>
+
+                <div v-else-if="$route.params.name == 'send_trx'">
+                    <transfer-details :params="{ from: wallet.address, to: $route.query.to, amount: $route.query.amount }" />
+                </div>
+
+                <div v-else-if="$route.params.name == 'send_token'">
+                    <transfer-asset-details :params="{ from: wallet.address, to: $route.query.to, amount: $route.query.amount, assetName: $route.query.tokenID }" />
+                </div>
             </div>
 
             <div v-if="!wallet.keypass">
