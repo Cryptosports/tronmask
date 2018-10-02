@@ -26,6 +26,14 @@
                     <votes-details v-else-if="txContract.type === 'VoteWitnessContract'" :contract="txContract" />
                     <transaction-details v-else :contract="txContract" />
                 </div>
+
+                <div v-else-if="$route.params.name == 'send_trx'">
+                    <transfer-details :params="{ from: wallet.address, to: $route.query.to, amount: $route.query.amount }" />
+                </div>
+
+                <div v-else-if="$route.params.name == 'send_token'">
+                    <transfer-asset-details :params="{ from: wallet.address, to: $route.query.to, amount: $route.query.amount, assetName: $route.query.tokenID }" />
+                </div>
             </div>
 
             <div v-if="!wallet.keypass">
@@ -47,6 +55,7 @@
 <script>
     import { mapState } from 'vuex'
     import { decryptKeyStore } from '../../lib/keystore'
+    import { getTokenRawAmount } from '../../lib/utils'
     import tronWeb from '../../lib/tronweb'
     import AppHeader from '../components/AppHeader.vue'
     import TransactionDetails from '../components/notifications/TransactionDetails.vue'
@@ -171,6 +180,12 @@
                     case 'submit_transaction':
                         this.submitTransaction()
                         break
+                    case 'send_trx':
+                        this.sendTrx()
+                        break
+                    case 'send_token':
+                        this.sendToken()
+                        break
                     default:
                         break
                 }
@@ -220,7 +235,6 @@
                     const signedTx = await tronWeb().trx.sign(this.payload.tx, wallet.privateKey)
                     const response = await tronWeb().trx.sendRawTransaction(signedTx)
 
-
                     if (response.result) {
                         this.getWindow(window => {
                             this.sendMessage('submit_transaction', {
@@ -235,6 +249,84 @@
                         this.message.show = true
                     }
                 } catch (error) {
+                    this.message.show = true
+                }
+
+                this.$store.commit('loading', false)
+            },
+
+            async sendTrx() {
+                const wallet = this.login()
+
+                if (!wallet) {
+                    return false
+                }
+
+                this.$store.commit('loading', true)
+
+                this.message.type = 'error'
+                this.message.text = 'Something went wrong while submitting the transaction'
+
+                try {
+                    const { to, amount } = this.$route.query
+                    const rawTx = await tronWeb().transactionBuilder.sendTrx(to, getTokenRawAmount(amount), wallet.address)
+                    const signedTx = await tronWeb().trx.sign(rawTx, wallet.privateKey)
+                    const response = await tronWeb().trx.sendRawTransaction(signedTx)
+
+                    if (response.result) {
+                        this.getWindow(window => {
+                            this.sendMessage('send_trx', {
+                                status: 'success',
+                                data: {
+                                    txID: rawTx.txID
+                                }
+                            })
+                            this.closeWindow(window.id)
+                        })
+                    }else {
+                        this.message.show = true
+                    }
+                } catch (error) {
+                    this.message.text = error.replace('class org.tron.core.exception.ContractValidateException : ', '')
+                    this.message.show = true
+                }
+
+                this.$store.commit('loading', false)
+            },
+
+            async sendToken() {
+                const wallet = this.login()
+
+                if (!wallet) {
+                    return false
+                }
+
+                this.$store.commit('loading', true)
+
+                this.message.type = 'error'
+                this.message.text = 'Something went wrong while submitting the transaction'
+
+                try {
+                    const { to, amount, tokenID } = this.$route.query
+                    const rawTx = await tronWeb().transactionBuilder.sendToken(to, amount, tokenID, wallet.address)
+                    const signedTx = await tronWeb().trx.sign(rawTx, wallet.privateKey)
+                    const response = await tronWeb().trx.sendRawTransaction(signedTx)
+
+                    if (response.result) {
+                        this.getWindow(window => {
+                            this.sendMessage('send_token', {
+                                status: 'success',
+                                data: {
+                                    txID: rawTx.txID
+                                }
+                            })
+                            this.closeWindow(window.id)
+                        })
+                    }else {
+                        this.message.show = true
+                    }
+                } catch (error) {
+                    this.message.text = error.replace('class org.tron.core.exception.ContractValidateException : ', '')
                     this.message.show = true
                 }
 

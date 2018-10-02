@@ -74,6 +74,31 @@ const actions = {
 
         notifications.show('submit_transaction', {}, sender.tab.id)
         notifications.sendPayload({ tx: msg.payload.tx })
+    },
+
+    sendTrx(msg, sender) {
+        if (!this.allowed(msg.domain)) {
+            this.unauthorized(msg, sender)
+            return
+        }
+
+        notifications.show('send_trx', {
+            to: msg.payload.to,
+            amount: msg.payload.amount
+        }, sender.tab.id)
+    },
+
+    sendToken(msg, sender) {
+        if (!this.allowed(msg.domain)) {
+            this.unauthorized(msg, sender)
+            return
+        }
+
+        notifications.show('send_token', {
+            to: msg.payload.to,
+            amount: msg.payload.amount,
+            tokenID: msg.payload.tokenID
+        }, sender.tab.id)
     }
 }
 
@@ -92,6 +117,14 @@ messaging.listen('content', (msg, sender) => {
             actions.submitTransaction(msg, sender)
             break
 
+        case 'tronmask_send_trx':
+            actions.sendTrx(msg, sender)
+            break
+
+        case 'tronmask_send_token':
+            actions.sendToken(msg, sender)
+            break
+
         default:
             break
     }
@@ -101,7 +134,9 @@ messaging.listen('content', (msg, sender) => {
 messaging.listen('popup', msg => {
     const methods = [
         'tronmask_connect',
-        'tronmask_submit_transaction'
+        'tronmask_submit_transaction',
+        'tronmask_send_trx',
+        'tronmask_send_token',
     ]
 
     if (methods.includes(msg.name)) {

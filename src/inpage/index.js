@@ -12,6 +12,14 @@ class TronMask {
     submitTransaction(tx, callback) {
         messaging.send('submit_transaction', { tx }, callback)
     }
+
+    send(to, amount, callback) {
+        messaging.send('send_trx', { to, amount }, callback)
+    }
+
+    sendToken(to, amount, tokenID, callback) {
+        messaging.send('send_token', { to, amount, tokenID }, callback)
+    }
 }
 
 window.TronMask = new TronMask()
