@@ -30,7 +30,25 @@
 
         <div id="tronmask" style="display: none">
             <button id="connect-tronmask" style="display: none">Connect to TronMask</button>
-            <div id="tronmask-account" style="display: none"></div>
+            <div id="tronmask-account" style="display: none">
+                <div id="tronmask-address"></div>
+                <form id="send-trx">
+                    <p id="send-trx-msg"></p>
+                    <p>
+                        <label>
+                            Receipient Address<br>
+                            <input id="recepient" type="text" name="recepient">
+                        </label>
+                    </p>
+                    <p>
+                        <label>
+                            Amount<br>
+                            <input id="amount" type="text" name="amount">
+                        </label>
+                    </p>
+                    <p><button type="submit">Send TRX</button></p>
+                </form>
+            </div>
         </div>
 
         <div id="no-tronmask">
@@ -39,37 +57,59 @@
     </div>
 
     <script>
-        var dappStart = function() {
-            document.getElementById('no-tronmask').style.display = 'none';
-            document.getElementById('tronmask').style.display = 'block';
+        var dapp = {
+            showAddress: function(address) {
+                document.getElementById('tronmask-account').style.display = 'block';
+                document.getElementById('tronmask-address').innerText = address;
+            },
 
-            TronMask.getAccount(function(response){
-                if (response.status === 'success') {
-                    var tronmaskAccountDOM = document.getElementById('tronmask-account')
-                    tronmaskAccountDOM.innerText = response.data.address
-                    tronmaskAccountDOM.style.display = 'block';
-                }else {
-                    document.getElementById('connect-tronmask').style.display = 'block';
-                }
-            });
+            start: function() {
+                var self = this;
 
-            document.getElementById('connect-tronmask').addEventListener('click', function(e){
-                e.preventDefault();
+                document.getElementById('no-tronmask').style.display = 'none';
+                document.getElementById('tronmask').style.display = 'block';
 
-                TronMask.connect(function(response){
+                TronMask.getAccount(function(response){
                     if (response.status === 'success') {
-                        var tronmaskAccountDOM = document.getElementById('tronmask-account')
-                        tronmaskAccountDOM.innerText = response.data.address
-                        tronmaskAccountDOM.style.display = 'block';
-                        document.getElementById('connect-tronmask').style.display = 'none';
+                        self.showAddress(response.data.address);
+                    }else {
+                        document.getElementById('connect-tronmask').style.display = 'block';
                     }
                 });
-            });
+
+                document.getElementById('connect-tronmask').addEventListener('click', function(e){
+                    e.preventDefault();
+
+                    TronMask.connect(function(response){
+                        if (response.status === 'success') {
+                            self.showAddress(response.data.address);
+                            document.getElementById('connect-tronmask').style.display = 'none';
+                        }
+                    });
+                });
+
+                document.getElementById('send-trx').addEventListener('submit', function(e){
+                    e.preventDefault();
+
+                    var recepient = document.getElementById('recepient').value;
+                    var amount = document.getElementById('amount').value;
+
+                    TronMask.send(recepient, amount, function(res){
+                        var msg = document.getElementById('send-trx-msg');
+
+                        if (res.status === 'success') {
+                            msg.innerText = 'Payment has been successfully sent.';
+                        }else {
+                            msg.innerText = 'Something went wrong while trying to send the payment.';
+                        }
+                    });
+                });
+            }
         };
 
         window.addEventListener('load', function() {
             if (typeof TronMask !== 'undefined') {
-                dappStart();
+                dapp.start();
             }
         });
     </script>
