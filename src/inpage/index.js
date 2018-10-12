@@ -9,6 +9,10 @@ class TronMask {
         messaging.send('get_account', {}, callback)
     }
 
+    getBalance(callback) {
+        messaging.send('get_balance', {}, callback)
+    }
+
     submitTransaction(tx, callback) {
         messaging.send('submit_transaction', { tx }, callback)
     }

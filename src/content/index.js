@@ -18,6 +18,7 @@ messaging.listenInpage(inpageMsg => {
     const methods = [
         'tronmask_connect',
         'tronmask_get_account',
+        'tronmask_get_balance',
         'tronmask_submit_transaction',
         'tronmask_send_trx',
         'tronmask_send_token',

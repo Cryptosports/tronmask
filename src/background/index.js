@@ -1,5 +1,6 @@
 import messaging from './messaging'
 import notifications from './notifications'
+import tronWeb from '../lib/tronweb'
 
 // Actions
 const actions = {
@@ -66,6 +67,22 @@ const actions = {
         this.account(msg, sender)
     },
 
+    async getBalance(msg, sender) {
+        if (!this.allowed(msg.domain)) {
+            this.unauthorized(msg, sender)
+            return
+        }
+
+        const state = this.getState()
+        const addressHex = tronWeb().address.toHex(state.wallet.address)
+        const account = await tronWeb().trx.getAccount(addressHex)
+
+        messaging.postContent(msg.name, {
+            status: 'success',
+            data: account
+        }, sender.tab.id)
+    },
+
     submitTransaction(msg, sender) {
         if (!this.allowed(msg.domain)) {
             this.unauthorized(msg, sender)
@@ -111,6 +128,10 @@ messaging.listen('content', (msg, sender) => {
 
         case 'tronmask_get_account':
             actions.getAccount(msg, sender)
+            break
+
+        case 'tronmask_get_balance':
+            actions.getBalance(msg, sender)
             break
 
         case 'tronmask_submit_transaction':
