@@ -14,9 +14,9 @@ export default {
             id: 2,
             name: 'Testnet',
             url: 'https://testapi.tronscan.org',
-            fullNode: 'https://api.trongrid.io:8090',
-            solidityNode: 'https://api.trongrid.io:8091',
-            eventServer: 'https://api.trongrid.io',
+            fullNode: 'https://api.shasta.trongrid.io',
+            solidityNode: 'https://api.shasta.trongrid.io',
+            eventServer: 'https://api.shasta.trongrid.io',
             type: 'testnet'
         }
     ]
