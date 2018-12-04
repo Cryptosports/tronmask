@@ -29,7 +29,7 @@
   },
   "scripts": {
     "dev": "webpack --config ./build/webpack.dev.js --hide-modules",
-    "build": "webpack --config ./build/webpack.prod.js --progress  --hide-modules --colors"
+    "build": "webpack --config ./build/webpack.prod.js -p --progress  --hide-modules --colors"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
