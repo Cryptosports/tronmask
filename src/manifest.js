@@ -5,7 +5,7 @@ module.exports = {
     name: 'TronMask',
     description: 'Tron Browser Extension Wallet',
     author: 'TronMask',
-    version: '1.1.0',
+    version: '1.2.0-dev',
     icons: {
         '16': 'icons/16.png',
         '32': 'icons/32.png',
