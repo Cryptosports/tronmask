@@ -3,13 +3,13 @@ export default {
         {
             id: 1,
             name: 'Mainnet',
-            url: 'https://api.tronscan.org',
+            tronscan: 'https://apilist.tronscan.org',
             type: 'mainnet'
         },
         {
             id: 2,
             name: 'Testnet',
-            url: 'https://testapi.tronscan.org',
+            tronscan: 'https://api.shasta.tronscan.org',
             type: 'testnet'
         }
     ]

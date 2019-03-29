@@ -19,7 +19,7 @@ export function getTokenRawAmount(amount) {
 }
 
 export function getTronScanLink(path) {
-    const domain = (store.state.network.type === 'mainnet') ? 'https://tronscan.org/#/' : 'https://test.tronscan.org/#/'
+    const domain = (store.state.network.type === 'mainnet') ? 'https://tronscan.org/#/' : 'https://shasta.tronscan.org/#/'
 
     return domain + path
 }
