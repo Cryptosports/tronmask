@@ -5,6 +5,7 @@ import wallet from './modules/wallet'
 import network from './modules/network'
 import account from './modules/account'
 import votes from './modules/votes'
+import trc10 from './modules/trc10'
 
 Vue.use(Vuex)
 
@@ -18,7 +19,8 @@ export default new Vuex.Store({
         wallet,
         network,
         account,
-        votes
+        votes,
+        trc10
     },
 
     state: {
