@@ -29,10 +29,10 @@
                         </span>
 
                         <span v-if="isOutgoingTransfer(transfer)" class="transfer-amount">
-                            - {{ $formatNumber(getTokenAmount(transfer), { maximumSignificantDigits: 2 }) }} {{ transfer.tokenName }}
+                            - {{ formatTokenAmount(transfer) }}
                         </span>
                         <span v-else class="transfer-amount incoming">
-                            + {{ $formatNumber(getTokenAmount(transfer), { maximumSignificantDigits: 2 }) }} {{ transfer.tokenName }}
+                            + {{ formatTokenAmount(transfer) }}
                         </span>
                     </external-link>
                 </div>
@@ -45,12 +45,15 @@
 
 <script>
     import { mapState } from 'vuex'
-    import { getTokenAmount, getTronScanLink } from '../../lib/utils'
+    import { getTronScanLink } from '../../lib/utils'
     import API from '../../lib/api'
     import AppHeader from '../components/AppHeader.vue'
     import ExternalLink from '../components/ExternalLink.vue'
+    import token from '../mixins/token'
 
     export default {
+        mixins: [token],
+
         components: {
             AppHeader,
             ExternalLink
@@ -84,6 +87,8 @@
 
                 this.$store.commit('account/transfers', transfersData.transfers)
                 this.$store.commit('loading', false)
+
+                await this.loadTokenData()
             },
 
             async loadMore(e) {
@@ -113,12 +118,24 @@
                 return transfer.transferFromAddress === this.address
             },
 
-            getTokenAmount(transfer) {
-                if (transfer.tokenName === 'TRX') {
-                    return getTokenAmount(transfer.amount)
+            formatTokenAmount(transfer) {
+                let tokenDetails = ['TRX', 'TRX', '6']
+
+                if (transfer.tokenName !== '_') {
+                    tokenDetails = this.getTRC10Details(transfer.tokenName)
                 }
 
-                return transfer.amount
+                const tokenAmount = this.$formatNumber(this.getTokenAmount(transfer.amount, tokenDetails[2]), { maximumSignificantDigits: parseInt(tokenDetails[2]) + 1 })
+
+                return `${tokenAmount} ${tokenDetails[1]}`
+            },
+
+            theTokenName(transfer) {
+                if (transfer.tokenName === '_') {
+                    return 'TRX'
+                }
+
+                return transfer.tokenName
             },
 
             compressAddress(address) {

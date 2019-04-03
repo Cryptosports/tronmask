@@ -16,8 +16,8 @@
                 <label class="input-label">
                     Token
                     <select class="input-field" v-model="selectedToken">
-                        <option v-for="token in account.tokens" :key="token.id" :value="token">
-                            {{ token.name }} ({{ $formatNumber(token.balance, { maximumSignificantDigits: 7 }) }} available)
+                        <option v-for="token in account.tokens" :key="token.name" :value="token">
+                            {{ getTokenName(token) }} ({{ getTokenBalance(token) }} available)
                         </option>
                     </select>
                 </label>
@@ -68,7 +68,7 @@
             confirmDialogText() {
                 return `
                     Are you sure you want to transfer
-                    <div><strong>${this.amount} ${this.selectedToken.name}</strong></div>
+                    <div><strong>${this.amount} ${this.getTokenName(this.selectedToken)}</strong></div>
                     <div>to</div>
                     <div><strong>${this.receipient}</strong> ?</div>
                 `
@@ -114,8 +114,10 @@
 
                 let amount = this.amount
 
-                if (this.selectedToken.name === "TRX") {
-                    amount = getTokenRawAmount(this.amount);
+                if (this.selectedToken.name === "_") {
+                    amount = getTokenRawAmount(this.amount)
+                }else {
+                    amount = getTokenRawAmount(this.amount, this.getTRC10Details(this.selectedToken.name)[2])
                 }
 
                 try {
@@ -130,7 +132,7 @@
                         this.message.text = 'Payment has been successfully sent'
                     }else {
                         this.message.type = 'error'
-                        this.message.text = 'Something went wrong while trying to send the payment'
+                        this.message.text = result.message
                     }
 
                     this.loadTokens()
@@ -164,7 +166,13 @@
                     return false
                 }
 
-                if (this.amount > this.selectedToken.balance) {
+                let precision = 6
+
+                if (this.selectedToken.name !== '_') {
+                    precision = parseInt(this.getTRC10Details(this.selectedToken.name)[2])
+                }
+
+                if (this.amount > this.getTokenAmount(this.selectedToken.balance, precision)) {
                     this.message.show = true
                     this.message.type = 'error'
                     this.message.text = 'Insufficient funds'
@@ -187,6 +195,24 @@
                 this.message.show = false
                 this.$store.commit('loading', true)
                 this.loadTokens()
+            },
+
+            getTokenName(token) {
+                if (token.name === '_') {
+                    return 'TRX'
+                }
+
+                return this.getTRC10Details(token.name)[1]
+            },
+
+            getTokenBalance(token) {
+                let precision = 6
+
+                if (token.name !== '_') {
+                    precision = parseInt(this.getTRC10Details(token.name)[2])
+                }
+
+                return this.$formatNumber(this.getTokenAmount(token.balance, precision), { maximumSignificantDigits: precision + 1 })
             }
         }
     }

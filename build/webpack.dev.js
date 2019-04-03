@@ -1,10 +1,11 @@
 const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const ChromeReloadPlugin = require('wcer')
+const GenerateJsonPlugin = require('generate-json-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const baseWebpack = require('./webpack.base')
 const { styleLoaders } = require('./tools')
+const manifest = require('../src/manifest')
 
 const rootDir = path.resolve(__dirname, '..')
 
@@ -13,10 +14,7 @@ module.exports = merge(baseWebpack, {
     module: { rules: styleLoaders({ sourceMap: true }) },
     devtool: '#cheap-module-source-map',
     plugins: [
-        new ChromeReloadPlugin({
-            port: 9090,
-            manifest: path.join(rootDir, 'src', 'manifest.js')
-        }),
+        new GenerateJsonPlugin('manifest.json', manifest, null, 2),
         new webpack.NoEmitOnErrorsPlugin(),
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"development"' }),
         new FriendlyErrorsPlugin()

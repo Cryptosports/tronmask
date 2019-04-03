@@ -8,18 +8,17 @@ for (let key of Object.keys(Transaction.Contract.ContractType)) {
 }
 
 export const CONTRACT_TYPES = contractTypes
-export const ONE_TRX = 1000000
 
-export function getTokenAmount(rawAmount) {
-    return rawAmount / ONE_TRX
+export function getTokenAmount(rawAmount, precision = 6) {
+    return rawAmount / Math.pow(10, precision)
 }
 
-export function getTokenRawAmount(amount) {
-    return amount * ONE_TRX
+export function getTokenRawAmount(amount, precision = 6) {
+    return amount * Math.pow(10, precision)
 }
 
 export function getTronScanLink(path) {
-    const domain = (store.state.network.type === 'mainnet') ? 'https://tronscan.org/#/' : 'https://test.tronscan.org/#/'
+    const domain = (store.state.network.type === 'mainnet') ? 'https://tronscan.org/#/' : 'https://shasta.tronscan.org/#/'
 
     return domain + path
 }

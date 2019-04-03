@@ -1,8 +1,11 @@
 import API from '../../lib/api'
 import { mapState } from 'vuex'
 import { getTokenAmount } from '../../lib/utils'
+import token from './token'
 
 export default {
+    mixins: [token],
+
     computed: mapState({
         account: state => state.account,
         address: state => state.wallet.address
@@ -10,7 +13,7 @@ export default {
 
     methods: {
         async loadAccount() {
-            const accountData = await API().getAccountByAddress(this.address)
+            const accountData = await API().getAccountByAddressNew(this.address)
 
             let account = {}
             account.balance = getTokenAmount(accountData.balance)
@@ -19,19 +22,18 @@ export default {
             account.frozen = getTokenAmount(accountData.frozen.total)
             account.frozenExpires = (accountData.frozen.balances.length > 0) ? accountData.frozen.balances[0].expires : 0
 
-            const tokens = accountData.tokenBalances.map((t, i) => ({
-                ...t,
-                id: i + 1
-            }))
+            const tokens = accountData.tokenBalances
 
             this.$store.commit('account/change', account)
             this.$store.commit('account/tokens', tokens)
+
+            await this.loadTokenData()
         },
 
         async refreshAccount() {
             this.$store.commit('loading', true)
             await this.loadAccount()
             this.$store.commit('loading', false)
-        }
+        },
     }
 }

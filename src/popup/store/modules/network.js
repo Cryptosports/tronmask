@@ -4,7 +4,7 @@ export default {
     state: {
         id: 1,
         name: 'Mainnet',
-        url: 'https://api.tronscan.org',
+        tronscan: 'https://apilist.tronscan.org',
         type: 'mainnet'
     },
 
@@ -12,7 +12,7 @@ export default {
         change(state, network) {
             state.id = network.id
             state.name = network.name
-            state.url = network.url
+            state.tronscan = network.tronscan
             state.type = network.type
         }
     }
