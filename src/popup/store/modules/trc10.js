@@ -1,8 +1,10 @@
+import tokens from '../../../tokens'
+
 export default {
     namespaced: true,
 
     state: {
-        tokens: []
+        tokens: tokens
     },
 
     mutations: {

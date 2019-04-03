@@ -8,9 +8,9 @@
             </div>
 
             <div v-else>
-                <div class="token" v-for="token in account.tokens" :key="token.name">
-                    <span class="token-name">{{ getTRC10Details(trc10, token.name, 1) }}</span>
-                    <span class="token-balance">{{ $formatNumber(token.balance, { maximumSignificantDigits: 7 }) }}</span>
+                <div class="token" v-for="token in account.tokens" :key="token.name" v-show="token.name !== '_'">
+                    <span class="token-name">{{ getTRC10Details(token.name)[1] }}</span>
+                    <span class="token-balance">{{ $formatNumber(getTokenAmount(token.balance, getTRC10Details(token.name)[2]), { maximumSignificantDigits: parseInt(getTRC10Details(token.name)[2]) + 1 }) }}</span>
                 </div>
             </div>
         </main>
